@@ -1,0 +1,29 @@
+{# templates/creer.html.twig #}
+
+
+{% extends 'base.html.twig' %}
+
+
+{% block container %}
+    <div class="col-md-8">
+
+        <h2 class="my-4">Créer un nouvel article
+            <small></small>
+        </h2>
+
+        {% if isValidate == "false" %}
+            {% form_theme form 'bootstrap_4_layout.html.twig' %}
+            {{ form(form) }}
+        {% endif %}
+
+        {% if isValidate == "true" %}
+            <p>L'article a bien été enregistré</p>
+
+            <a href="/article/{{ id }}"><button type="button" class="btn btn-secondary">Voir l'article</button></a>
+        {% endif %}
+
+</div>
+
+
+
+{% endblock %}

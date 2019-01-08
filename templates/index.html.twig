@@ -1,0 +1,25 @@
+{# templates/index.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block container %}
+    <div class="col-md-8">
+        <h2 class="my-4">Les derniers articles
+            <small></small>
+        </h2>
+
+        {% for article in articles %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3 class="card-title">{{ article.titre }}</h3>
+                <p class="card-text">{{ article.contenu }}</p>
+                <a href="/article/{{ article.id }}" class="btn btn-primary">Read More &rarr;</a>
+            </div>
+            <div class="card-footer text-muted">
+                Publié le {{ article.date|date("d/m/Y") }} à {{ article.date|date("H:i:s") }} par {{ article.auteur }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
