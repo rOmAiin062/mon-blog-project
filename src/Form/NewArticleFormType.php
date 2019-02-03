@@ -16,9 +16,15 @@ class NewArticleFormType extends AbstractType
     {
         $builder
             ->add('titre', TextType::class, ['label' => "Titre de l'article"])
-            ->add('contenu', TextareaType::class, ['label' => "Contenu de l'article"])
-            ->add('auteur', TextType::class, ['label' => "Nom de l'auteur"])
-            ->add('enregistrer', SubmitType::class, ['label' => 'Enregistrer'])
+            ->add('contenu', TextareaType::class, ['label' => "Contenu de l'article"]);
+        // Handle authenticated user
+        if ($options['ifUser'])
+            $builder
+                ->add('auteur', TextType::class, ['label' => "Nom de l'auteur", 'disabled' => true]);
+        else
+            $builder->add('auteur', TextType::class, ['label' => "Nom de l'auteur"]);
+
+        $builder->add('enregistrer', SubmitType::class, ['label' => 'Enregistrer'])
         ;
     }
 
@@ -27,5 +33,6 @@ class NewArticleFormType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Article::class,
         ]);
+        $resolver->setRequired(array('ifUser'));
     }
 }

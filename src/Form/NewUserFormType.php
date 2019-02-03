@@ -26,7 +26,6 @@ class NewUserFormType extends AbstractType
     {
         $builder
             ->add('username', TextType::class, ['label' => "Nom d'utilisateur"])
-            ->add('roles', CollectionType::class, ['entry_type' => HiddenType::class])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'invalid_message' => 'Les champs mot de passe doivent correspondre.',

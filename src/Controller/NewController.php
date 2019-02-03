@@ -28,12 +28,17 @@ class NewController extends AbstractController
     {
 
         $article = new Article();
-        $formBuilder = $this->createForm(NewArticleFormType::class, $article);
+        $ifUser = false;
+        $currentUser = $this->getUser();
 
-
+        if ($currentUser) {
+            $article->setAuteur($currentUser->getUsername());
+            $ifUser = true;
+        }
+        $formBuilder = $this->createForm(NewArticleFormType::class, $article, ['ifUser' => $ifUser]);
         $formBuilder->handleRequest($request);
+
         if ($formBuilder->isSubmitted() && $formBuilder->isValid()) {
-            //$data = $formBuilder->getData();
             $entityManager = $this->getDoctrine()->getManager();
 
             $date = date("d/m/Y H:i:s");
@@ -46,8 +51,6 @@ class NewController extends AbstractController
             return $this->render('creer.html.twig', ['isValidate' => 'true', 'id' => $article->getId()]);
 
         }
-
-
 
         return $this->render('creer.html.twig', ['form' => $formBuilder->createView(), 'isValidate' => 'false']);
     }

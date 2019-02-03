@@ -5,26 +5,27 @@
 {% block container %}
         <div class="col-md-8">
             <h2 class="my-4"><i class="fas fa-pen-fancy"></i> Article <span id="article_id">{{ article.id }}</span>
-                <small>
+                {%  if app.user and app.user.username == article.auteur %}
                     <div class="btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-cog"></i>                        </button>
+                            <i class="fas fa-cog"></i>
+                        </button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                             <a class="dropdown-item" href="/edit/{{ article.id}}">Modifier</a>
                             <a class="dropdown-item" id="delete_button" href="#">Supprimer</a>
                         </div>
-
-                </small>
+                    </div>
+                {% endif %}
             </h2>
 
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h3 class="card-title">{{ article.titre }}</h3>
-                        <p class="card-text">{{ article.contenu }}</p>
-                    </div>
-                    <div class="card-footer text-muted">
-                        Publié le {{ article.date|date("d/m/Y") }} à {{ article.date|date("H:i:s") }} par {{ article.auteur }}
-                    </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title">{{ article.titre }}</h3>
+                    <p class="card-text">{{ article.contenu }}</p>
                 </div>
+                <div class="card-footer text-muted">
+                    Publié le {{ article.date|date("d/m/Y") }} à {{ article.date|date("H:i:s") }} par {{ article.auteur }}
+                </div>
+            </div>
         </div>
 {% endblock %}
