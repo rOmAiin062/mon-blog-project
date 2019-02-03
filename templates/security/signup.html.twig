@@ -10,6 +10,9 @@
 
         {% if isValidate == "false" %}
             {% form_theme form 'bootstrap_4_layout.html.twig' %}
+            {% if error != '' %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
             {{ form(form) }}
         {% endif %}
 

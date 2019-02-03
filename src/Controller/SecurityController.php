@@ -20,7 +20,6 @@ class SecurityController extends AbstractController
     {
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
-        dump($error);
         // last username entered by the user
         $lastUsername = $authenticationUtils->getLastUsername();
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
@@ -37,20 +36,36 @@ class SecurityController extends AbstractController
         $formBuilder->handleRequest($request);
         if ($formBuilder->isSubmitted() && $formBuilder->isValid()) {
 
+            // Handle same usernamae exception
+            $userRepo = $this->getDoctrine()->getRepository(User::class);
+            $userCheck = $userRepo->findOneBy(['username' => $user->getUsername()]);
+            if ($userCheck)
+                return $this->render('security/signup.html.twig',
+                    ['form' => $formBuilder->createView(), 'isValidate' => 'false', 'error' => 'The username is already used.']);
+
             $entityManager = $this->getDoctrine()->getManager();
 
-            // Handle error here : Duplicated username
-
+            // Encrypt password
             $encoded = password_hash($user->getPassword(), PASSWORD_ARGON2I);
             $user->setPassword($encoded);
+
+            // Set user role
+            $user->setRoles(array('ROLE_USER'));
 
             $entityManager->persist($user);
 
             $entityManager->flush();
 
-            return $this->render('security/signup.html.twig', ['isValidate' => 'true', 'username' => $user->getUsername()]);
+            return $this->render('security/signup.html.twig', ['isValidate' => 'true', 'username' => $user->getUsername(), 'error' => '']);
         }
 
-        return $this->render('security/signup.html.twig', ['form' => $formBuilder->createView(), 'isValidate' => 'false']);
+        return $this->render('security/signup.html.twig', ['form' => $formBuilder->createView(), 'isValidate' => 'false', 'error' => '']);
+    }
+
+    /**
+     * @Route("/logout", name="app_logout")
+     */
+    public function logout(){
+
     }
 }
