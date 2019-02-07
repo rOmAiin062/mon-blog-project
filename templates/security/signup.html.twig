@@ -1,0 +1,24 @@
+{# templates/security/signup.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+
+{% block container %}
+    <div class="col-md-8">
+
+        <h2 class="my-4">Inscrivez-vous</h2>
+
+        {% if isValidate == "false" %}
+            {% form_theme form 'bootstrap_4_layout.html.twig' %}
+            {% if error != '' %}
+                <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+            {{ form(form) }}
+        {% endif %}
+
+        {% if isValidate == "true" %}
+            <p>Inscription réusssie ! Bienvenue {{ username }}</p>
+        {% endif %}
+
+    </div>
+{% endblock %}
