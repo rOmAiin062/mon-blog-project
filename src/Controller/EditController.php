@@ -24,8 +24,15 @@ class EditController extends AbstractController
     {
         $articleRepository = $this->getDoctrine()->getRepository(Article::class);
         $article = $articleRepository->findOneById($id);
+        $ifUser = false;
+        $currentUser = $this->getUser();
 
-        $formBuilder = $this->createForm(NewArticleFormType::class, $article);
+        if ($currentUser) {
+            $article->setAuteur($currentUser->getUsername());
+            $ifUser = true;
+        }
+
+        $formBuilder = $this->createForm(NewArticleFormType::class, $article, ['ifUser' => $ifUser]);
 
         $formBuilder->handleRequest($request);
         if ($formBuilder->isSubmitted() && $formBuilder->isValid()) {
