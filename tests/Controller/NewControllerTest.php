@@ -17,13 +17,15 @@ use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 class NewControllerTest extends WebTestCase
 {
     private $client = null;
+    private $getDoctrine = null;
 
     public function setUp()
     {
         $this->client = static::createClient();
+        $this->getDoctrine = $this->client->getContainer()->get('doctrine')->getManager();
     }
 
-    public function testSecuredHello()
+    public function testGetNew()
     {
         $this->logIn();
         $crawler = $this->client->request('GET', '/new');
@@ -59,8 +61,7 @@ class NewControllerTest extends WebTestCase
         $firewallName = 'main';
         $firewallContext = 'main';
 
-        $getDoctrine = $this->client->getContainer()->get('doctrine')->getManager();
-        $user = $getDoctrine->getRepository('App:User')->findOneByUsername('test');
+        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername('test');
 
 
         $token = new PostAuthenticationGuardToken($user, $firewallName, ['ROLE_USER']);
