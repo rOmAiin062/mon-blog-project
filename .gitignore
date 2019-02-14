@@ -75,6 +75,7 @@ fabric.properties
 *.iml
 modules.xml
 .idea/misc.xml
+.idea/php.xml
 # *.ipr
 
 # Sonarlint plugin
@@ -147,4 +148,5 @@ modules.xml
 
 ###>
 .env
+.env.test
 ###<
