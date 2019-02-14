@@ -13,6 +13,7 @@ use  \Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ArticleControllerTest extends WebTestCase
 {
+    /** @test */
     public function showTest()
     {
         $client = static::createClient();

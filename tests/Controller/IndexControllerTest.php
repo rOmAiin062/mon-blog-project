@@ -13,6 +13,7 @@ use  \Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 class IndexControllerTest extends WebTestCase
 {
 
+    /** @test */
     public function testIndexPage()
     {
         $client = static::createClient();

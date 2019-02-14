@@ -10,32 +10,65 @@
 namespace App\Tests\Controller;
 
 use  \Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
 class NewControllerTest extends WebTestCase
 {
-    public function newTest()
+    private $client = null;
+    private $getDoctrine = null;
+
+    public function setUp()
     {
-        $client = static::createClient();
-
-        $crawler = $client->request('GET', '/new');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->client = static::createClient();
+        $this->getDoctrine = $this->client->getContainer()->get('doctrine')->getManager();
     }
 
-    public function createNewArticleTest()
+    public function testGetNew()
     {
-        $client = static::createClient();
-        $crawler = $client->request('GET', '/new');
+        $this->logIn();
+        $crawler = $this->client->request('GET', '/new');
 
-        $buttonCrawlerNode = $crawler->selectButton('submit');
-
-        $form = $buttonCrawlerNode->form(array(
-            'new_article_form[titre]' => 'Article de test',
-            'new_article_form[contenu]' => 'Ceci est un fake article... Fake news !',
-            'new_article_form[auteur]' => 'Romain'
-        ));
-
-        $crawler = $client->submit($form);
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+        $this->assertSame('Créer un nouvel article', trim($crawler->filter('h2.my-4')->text()));
     }
 
+//    /** @test */
+//    public function createNewArticleTest()
+//    {
+//
+//        $this->logIn();
+//        $crawler = $this->client->request('GET', '/new');
+//
+//        $buttonCrawlerNode = $crawler->selectButton('submit');
+//
+//        $form = $buttonCrawlerNode->form(
+//            ['new_article_form[titre]' => 'Article de test'],
+//            ['new_article_form[contenu]' => 'Ceci est un fake article... Fake news !'],
+//            ['new_article_form[auteur]' => 'Romain']
+//        );
+//
+//        $crawler = $this->client->submit($form);
+//        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+//    }
+
+
+    private function logIn()
+    {
+        $session = $this->client->getContainer()->get('session');
+
+        $firewallName = 'main';
+        $firewallContext = 'main';
+
+        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername('test');
+
+
+        $token = new PostAuthenticationGuardToken($user, $firewallName, ['ROLE_USER']);
+        $session->set('_security_'.$firewallContext, serialize($token));
+        $session->save();
+
+        $cookie = new Cookie($session->getName(), $session->getId());
+        $this->client->getCookieJar()->set($cookie);
+    }
 }
