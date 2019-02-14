@@ -25,33 +25,48 @@ class NewControllerTest extends WebTestCase
         $this->getDoctrine = $this->client->getContainer()->get('doctrine')->getManager();
     }
 
-    public function testGetNew()
+    public function testGetNewWithUnautenticatedUser()
+    {
+        $this->client->request('GET', '/new');
+
+        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+        $crawler = $this->client->followRedirect();
+        $title = $crawler->filter('h2.my-4')->text();
+        $this->assertSame('Formulaire d\'authentification', trim($title));
+    }
+
+    public function testGetNewWithAuthenticatedUser()
     {
         $this->logIn();
         $crawler = $this->client->request('GET', '/new');
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame('Créer un nouvel article', trim($crawler->filter('h2.my-4')->text()));
+        $title = $crawler->filter('h2.my-4')->text();
+        $this->assertSame('Créer un nouvel article', trim($title));
     }
 
-//    /** @test */
-//    public function createNewArticleTest()
-//    {
-//
-//        $this->logIn();
-//        $crawler = $this->client->request('GET', '/new');
-//
-//        $buttonCrawlerNode = $crawler->selectButton('submit');
-//
-//        $form = $buttonCrawlerNode->form(
-//            ['new_article_form[titre]' => 'Article de test'],
-//            ['new_article_form[contenu]' => 'Ceci est un fake article... Fake news !'],
-//            ['new_article_form[auteur]' => 'Romain']
-//        );
-//
-//        $crawler = $this->client->submit($form);
-//        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-//    }
+    /** @test */
+    public function createNewArticleTest()
+    {
+
+        $this->logIn();
+        $crawler = $this->client->request('GET', '/new');
+
+        $form = $crawler->selectButton('new_article_form_enregistrer')->form(
+            [
+                'new_article_form[titre]' => 'Article de test',
+                'new_article_form[contenu]' => 'Ceci est un fake article... Fake news !',
+                'new_article_form[auteur]' => 'test'
+            ]);
+
+
+        $this->client->submit($form);
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
+
+        $newArticle = $this->getDoctrine->getRepository('App:Article')->findOneByAuteur('test');
+        $this->assertNotNull($newArticle);
+    }
+
 
 
     private function logIn()
@@ -62,7 +77,6 @@ class NewControllerTest extends WebTestCase
         $firewallContext = 'main';
 
         $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername('test');
-
 
         $token = new PostAuthenticationGuardToken($user, $firewallName, ['ROLE_USER']);
         $session->set('_security_'.$firewallContext, serialize($token));
