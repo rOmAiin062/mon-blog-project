@@ -7,9 +7,17 @@
 {% block container %}
     <div class="col-md-8">
 
+        {% if createNew == "true" %}
         <h2 class="my-4">Créer un nouvel article
             <small></small>
         </h2>
+        {% endif %}
+
+        {% if createNew == "false" %}
+            <h2 class="my-4">Modifier l'article
+                <small></small>
+            </h2>
+        {% endif %}
 
         {% if isValidate == "false" %}
             {% form_theme form 'bootstrap_4_layout.html.twig' %}

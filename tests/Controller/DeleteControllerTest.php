@@ -21,6 +21,9 @@ class DeleteControllerTest extends WebTestCase
     private $client = null;
     private $getDoctrine = null;
 
+    private static $idArticle = 1;
+    private static $username = 'test';
+
     public function setUp()
     {
         $this->client = static::createClient();
@@ -31,10 +34,10 @@ class DeleteControllerTest extends WebTestCase
 
     public function testDeleteWithNoLogIn()
     {
-        $crawler = $this->client->request('DELETE', '/article/3');
+        $crawler = $this->client->request('DELETE', '/article/' . self::$idArticle);
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame('Article 3', trim($crawler->filter('h2.my-4')->text()));
+        $this->assertSame('Article ' . self::$idArticle, trim($crawler->filter('h2.my-4')->text()));
     }
 
     private function logIn()
@@ -44,7 +47,7 @@ class DeleteControllerTest extends WebTestCase
         $firewallName = 'main';
         $firewallContext = 'main';
 
-        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername('test');
+        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername(self::$username);
 
 
         $token = new PostAuthenticationGuardToken($user, $firewallName, ['ROLE_USER']);
