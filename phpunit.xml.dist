@@ -11,7 +11,7 @@
         <ini name="error_reporting" value="-1" />
         <env name="APP_ENV" value="test" />
         <env name="SHELL_VERBOSITY" value="-1" />
-        <env name="DATABASE_URL" value="mysql://{db_username}:{db_password}@127.0.0.1:3306/mon_blog_test" />
+        <env name="DATABASE_URL" value="mysql://letaaz:@127.0.0.1:3306/mon_blog_test" />
     </php>
 
     <testsuites>

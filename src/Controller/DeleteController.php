@@ -12,6 +12,7 @@ namespace App\Controller;
 use App\Entity\Article;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DeleteController extends AbstractController
@@ -31,6 +32,12 @@ class DeleteController extends AbstractController
     {
         $articleRepository = $this->getDoctrine()->getRepository(Article::class);
         $article = $articleRepository->findOneById($id);
+        $ifUser = false;
+        $currentUser = $this->getUser();
+
+        if (!$currentUser || $article->getAuteur() != $currentUser->getUsername()) {
+            return new JsonResponse(null, 403);
+        }
 
         $entityManager = $this->getDoctrine()->getManager();
 

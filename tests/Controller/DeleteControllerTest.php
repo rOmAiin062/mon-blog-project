@@ -10,6 +10,8 @@
 namespace App\Tests\Controller;
 
 use App\Entity\Article;
+use App\Entity\User;
+use DateTime;
 use  \Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Response;
@@ -21,34 +23,60 @@ class DeleteControllerTest extends WebTestCase
     private $client = null;
     private $getDoctrine = null;
 
-    private static $idArticle = 1;
-    private static $username = 'test';
-
     public function setUp()
     {
         $this->client = static::createClient();
         $this->getDoctrine = $this->client->getContainer()->get('doctrine')->getManager();
-
-
     }
 
-    public function testDeleteWithNoLogIn()
+    public function testDeleteWithUnauthenticatedUser()
     {
-        $crawler = $this->client->request('DELETE', '/article/' . self::$idArticle);
+        $crawler = $this->client->request('DELETE', '/delete/1');
 
-        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame('Article ' . self::$idArticle, trim($crawler->filter('h2.my-4')->text()));
+        $this->assertSame(Response::HTTP_FOUND, $this->client->getResponse()->getStatusCode());
+        $crawler = $this->client->followRedirect();
+        $title = $crawler->filter('h2.my-4')->text();
+        $this->assertSame('Formulaire d\'authentification', trim($title));
     }
 
-    private function logIn()
+    public function testDeleteWithAuthenticatedUser()
+    {
+        $this->createFakeUser('fakeAuteur');
+        $this->logIn('fakeAuteur');
+
+        $this->createFakeArticle('fakeAuteur');
+        $article = $this->getDoctrine->getRepository('App:Article')->findOneByTitre('fakeTitre');
+        $crawler = $this->client->request('DELETE', '/delete/'.$article->getId());
+
+        $this->assertSame(Response::HTTP_NO_CONTENT, $this->client->getResponse()->getStatusCode());
+        $this->removeFakeUser('fakeAuteur');
+    }
+
+    public function testDeleteWithNotAllowedUser()
+    {
+        $this->createFakeUser('fakeAuteur');
+        $this->createFakeUser('fakeAuteur2');
+        $this->logIn('fakeAuteur');
+
+        $this->createFakeArticle('fakeAuteur');
+        $this->createFakeArticle('fakeAuteur2');
+        $article = $this->getDoctrine->getRepository('App:Article')->findOneByAuteur('fakeAuteur2');
+        $crawler = $this->client->request('DELETE', '/delete/'.$article->getId());
+
+        $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
+        $this->removeFakeUser('fakeAuteur');
+        $this->removeFakeUser('fakeAuteur2');
+
+    }
+
+    private function logIn(string $username)
     {
         $session = $this->client->getContainer()->get('session');
 
         $firewallName = 'main';
         $firewallContext = 'main';
 
-        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername(self::$username);
-
+        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername($username);
 
         $token = new PostAuthenticationGuardToken($user, $firewallName, ['ROLE_USER']);
         $session->set('_security_'.$firewallContext, serialize($token));
@@ -56,5 +84,30 @@ class DeleteControllerTest extends WebTestCase
 
         $cookie = new Cookie($session->getName(), $session->getId());
         $this->client->getCookieJar()->set($cookie);
+    }
+
+    private function createFakeArticle(string $fakeAuteur){
+        $article = new Article();
+        $article->setTitre('fakeTitre');
+        $article->setContenu('fakeContenu');
+        $article->setDate(new DateTime('2019-01-01'));
+        $article->setAuteur($fakeAuteur);
+        $this->getDoctrine->persist($article);
+        $this->getDoctrine->flush();
+    }
+
+    private function createFakeUser(string $fake){
+        $user = new User();
+        $user->setUsername($fake);
+        $user->setPassword($fake . 'password');
+        $user->setRoles(array('ROLE_USER'));
+        $this->getDoctrine->persist($user);
+        $this->getDoctrine->flush();
+    }
+
+    public function removeFakeUser(string $fake){
+        $toto = $this->getDoctrine->getRepository('App:User')->findOneByUsername($fake);
+        $this->getDoctrine->remove($toto);
+        $this->getDoctrine->flush();
     }
 }
