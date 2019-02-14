@@ -144,9 +144,12 @@ modules.xml
 ###> symfony/phpunit-bridge ###
 .phpunit
 /phpunit.xml
+phpunit.xml.*
+phpunit.xml.dist
 ###< symfony/phpunit-bridge ###
 
 ###>
 .env
 .env.test
+
 ###<

@@ -52,6 +52,6 @@ class NewController extends AbstractController
 
         }
 
-        return $this->render('creer.html.twig', ['form' => $formBuilder->createView(), 'isValidate' => 'false']);
+        return $this->render('creer.html.twig', ['form' => $formBuilder->createView(), 'isValidate' => 'false', 'createNew' => 'true']);
     }
 }
