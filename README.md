@@ -15,6 +15,32 @@ Ce projet permet de mettre en place un blog simpliste : des auteurs, des article
 	- Voir l'ensemble des articles de l'utilisateur
 	- Changer son mot de passe (contraintes de taille sur le mdp >6 char)
 
+#### Configuration de la base de données     
+
+- Pour le bon fonctionnement du projet, il est nécessaire de mettre en place une base de données (MySQL)
+    - Configurer la connexion à la BDD (dans le fichier .env)
+      "DATABASE_URL=mysql://DBUsername:DBPassword@DBUrl:3306/DBName"
+      
+    - Charger le fichier sql fourni avec le projet à télécharger [ici](https://github.com/rOmAiin062/mon-blog-project/blob/master/mon-blog-project.sql)
+    - La DB contient : table article, table user
+    
+    
+#### Configuration de la base de données pour les tests
+- Pour l'exécution des tests, il faut utiliser une base dédiées aux tests 
+    - Configurer le fichier 'phpunit.xml.dist' à la racine du projet :
+            
+            <php>
+                <ini name="error_reporting" value="-1" />
+                <env name="APP_ENV" value="test" />
+                <env name="SHELL_VERBOSITY" value="-1" />
+        	    <env name="DATABASE_URL" value="mysql://DBUsername:DBPassword@DBUrl:3306/DBNameTEST" />
+            </php>
+    (doit être similaire à .env sauf nom de la DB différent)
+    
+    - Charger le fichier sql fourni avec le projet à télécharger [ici](https://github.com/rOmAiin062/mon-blog-project/blob/master/mon_blog_test.sql)
+    - La DB test contient : table article, table user
+
+
 
 #### Architecture du projet
 
@@ -34,4 +60,6 @@ Ce projet permet de mettre en place un blog simpliste : des auteurs, des article
 	- ArticleControllerTest
 	- EditControllerTest
 	- DeleteControllerTest
+	
+
 
