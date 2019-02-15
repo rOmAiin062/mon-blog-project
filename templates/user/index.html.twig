@@ -21,9 +21,12 @@
             </div>
             <div class="modal-body">
                 <ul>
-                    <li><a href="#">Changer mot de passe</a></li>
+                    <li><a href="/changepasswd">Changer mot de passe</a></li>
                     <li><a href="#">Changer description</a></li>
                 </ul>
             </div>
+            {% if info %}
+                <div class="alert alert-info">{{ info }}</div>
+            {% endif %}
         </div>
 {% endblock %}

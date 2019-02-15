@@ -25,6 +25,6 @@ class UserController extends AbstractController
         }
 
         return $this->render('user/index.html.twig', [
-            'user' => $currentUser, 'nb_article' => $nb_article]);
+            'user' => $currentUser, 'nb_article' => $nb_article, 'info' => '']);
     }
 }
