@@ -65,9 +65,9 @@ class NewControllerTest extends WebTestCase
         $this->client->submit($form);
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
-        $newArticle = $this->getDoctrine->getRepository('App:Article')->findOneByAuteur('test');
+        $newArticle = $this->getDoctrine->getRepository('App:Article')->findOneByAuteur('fake2');
         $this->assertNotNull($newArticle);
-        $this->assertSame('test', $newArticle->getAuteur());
+        $this->assertSame('fake2', $newArticle->getAuteur());
         $this->removeFakeUser('fake2');
     }
 
