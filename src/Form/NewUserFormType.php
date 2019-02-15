@@ -10,12 +10,14 @@ namespace App\Form;
 
 
 use App\Entity\User;
+use function PHPSTORM_META\type;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -34,6 +36,7 @@ class NewUserFormType extends AbstractType
                 'first_options'  => ['label' => 'Mot de passe'],
                 'second_options' => ['label' => 'Confirmez le mot de passe'],
             ])
+            ->add('bio', TextareaType::class, ['label' => "Bio", 'attr' => array('placeholder' => 'Décrivez-vous en quelques mots...')])
             ->add('signup', SubmitType::class, ['label' => 'S\'inscrire'])
         ;
     }

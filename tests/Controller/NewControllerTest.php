@@ -9,6 +9,7 @@
 
 namespace App\Tests\Controller;
 
+use App\Entity\User;
 use  \Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\BrowserKit\Cookie;
@@ -37,19 +38,20 @@ class NewControllerTest extends WebTestCase
 
     public function testGetNewWithAuthenticatedUser()
     {
-        $this->logIn();
+        $this->createFakeUser('fake1');
+        $this->logIn('fake1');
         $crawler = $this->client->request('GET', '/new');
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $title = $crawler->filter('h2.my-4')->text();
         $this->assertSame('Créer un nouvel article', trim($title));
+        $this->removeFakeUser('fake1');
     }
 
-    /** @test */
-    public function createNewArticleTest()
+    public function testCreateNewArticleTest()
     {
-
-        $this->logIn();
+        $this->createFakeUser('fake2');
+        $this->logIn('fake2');
         $crawler = $this->client->request('GET', '/new');
 
         $form = $crawler->selectButton('new_article_form_enregistrer')->form(
@@ -65,18 +67,18 @@ class NewControllerTest extends WebTestCase
 
         $newArticle = $this->getDoctrine->getRepository('App:Article')->findOneByAuteur('test');
         $this->assertNotNull($newArticle);
+        $this->assertSame('test', $newArticle->getAuteur());
+        $this->removeFakeUser('fake2');
     }
 
-
-
-    private function logIn()
+    private function logIn(string $username)
     {
         $session = $this->client->getContainer()->get('session');
 
         $firewallName = 'main';
         $firewallContext = 'main';
 
-        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername('test');
+        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername($username);
 
         $token = new PostAuthenticationGuardToken($user, $firewallName, ['ROLE_USER']);
         $session->set('_security_'.$firewallContext, serialize($token));
@@ -84,5 +86,20 @@ class NewControllerTest extends WebTestCase
 
         $cookie = new Cookie($session->getName(), $session->getId());
         $this->client->getCookieJar()->set($cookie);
+    }
+
+    private function createFakeUser(string $fake){
+        $user = new User();
+        $user->setUsername($fake);
+        $user->setPassword($fake . 'password');
+        $user->setRoles(array('ROLE_USER'));
+        $this->getDoctrine->persist($user);
+        $this->getDoctrine->flush();
+    }
+
+    public function removeFakeUser(string $fake){
+        $toto = $this->getDoctrine->getRepository('App:User')->findOneByUsername($fake);
+        $this->getDoctrine->remove($toto);
+        $this->getDoctrine->flush();
     }
 }

@@ -21,6 +21,6 @@ class IndexController extends AbstractController
         $articles = $articleRepository->findAll();
 
 
-        return $this->render('index.html.twig', ['articles' => $articles]);
+        return $this->render('index.html.twig', ['articles' => $articles, 'personal' => false]);
     }
 }
