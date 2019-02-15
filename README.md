@@ -15,7 +15,7 @@ Ce projet permet de mettre en place un blog simpliste : des auteurs, des article
 	- Voir l'ensemble des articles de l'utilisateur
 	- Changer son mot de passe (contraintes de taille sur le mdp >6 char)
 
-#### Configuration de la base de données     
+#### Configuration de la base de données     
 
 - Pour le bon fonctionnement du projet, il est nécessaire de mettre en place une base de données (MySQL)
     - Configurer la connexion à la BDD (dans le fichier .env)
@@ -25,7 +25,7 @@ Ce projet permet de mettre en place un blog simpliste : des auteurs, des article
     - La DB contient : table article, table user
     
     
-#### Configuration de la base de données pour les tests
+#### Configuration de la base de données pour les tests
 - Pour l'exécution des tests, il faut utiliser une base dédiées aux tests 
     - Configurer le fichier 'phpunit.xml.dist' à la racine du projet :
             
@@ -54,12 +54,13 @@ Ce projet permet de mettre en place un blog simpliste : des auteurs, des article
 	- UserController (Pour consulter la page de l'utilisateur)
 
 
-- 5 classes de tests : 
+- 6 classes de tests : 
 	- IndexControllerTest
 	- NewControllerTest
 	- ArticleControllerTest
 	- EditControllerTest
 	- DeleteControllerTest
+	- UserControllerTest
 	
 
 
