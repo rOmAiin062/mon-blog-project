@@ -9,25 +9,12 @@
 
 namespace App\Tests\Controller;
 
-use App\Entity\Article;
-use App\Entity\User;
-use DateTime;
-use  \Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
-class DeleteControllerTest extends WebTestCase
+class DeleteControllerTest extends AbstractSetupClass
 {
-
-    private $client = null;
-    private $getDoctrine = null;
-
-    public function setUp()
-    {
-        $this->client = static::createClient();
-        $this->getDoctrine = $this->client->getContainer()->get('doctrine')->getManager();
-    }
 
     public function testDeleteWithUnauthenticatedUser()
     {
@@ -70,7 +57,7 @@ class DeleteControllerTest extends WebTestCase
 
     }
 
-    private function logIn(string $username)
+    private function logIn($username)
     {
         $session = $this->client->getContainer()->get('session');
 
@@ -85,30 +72,5 @@ class DeleteControllerTest extends WebTestCase
 
         $cookie = new Cookie($session->getName(), $session->getId());
         $this->client->getCookieJar()->set($cookie);
-    }
-
-    private function createFakeArticle(string $fakeAuteur, string $fakeTitre){
-        $article = new Article();
-        $article->setTitre($fakeTitre);
-        $article->setContenu('fakeContenu');
-        $article->setDate(new DateTime('2019-01-01'));
-        $article->setAuteur($fakeAuteur);
-        $this->getDoctrine->persist($article);
-        $this->getDoctrine->flush();
-    }
-
-    private function createFakeUser(string $fake){
-        $user = new User();
-        $user->setUsername($fake);
-        $user->setPassword($fake . 'password');
-        $user->setRoles(array('ROLE_USER'));
-        $this->getDoctrine->persist($user);
-        $this->getDoctrine->flush();
-    }
-
-    public function removeFakeUser(string $fake){
-        $toto = $this->getDoctrine->getRepository('App:User')->findOneByUsername($fake);
-        $this->getDoctrine->remove($toto);
-        $this->getDoctrine->flush();
     }
 }

@@ -15,16 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
-class NewControllerTest extends WebTestCase
+class NewControllerTest extends AbstractSetupClass
 {
-    private $client = null;
-    private $getDoctrine = null;
-
-    public function setUp()
-    {
-        $this->client = static::createClient();
-        $this->getDoctrine = $this->client->getContainer()->get('doctrine')->getManager();
-    }
 
     public function testGetNewWithUnautenticatedUser()
     {
@@ -69,6 +61,7 @@ class NewControllerTest extends WebTestCase
         $this->assertNotNull($newArticle);
         $this->assertSame('fake2', $newArticle->getAuteur());
         $this->removeFakeUser('fake2');
+        $this->removeFakeArticle($newArticle->getId());
     }
 
     private function logIn(string $username)
@@ -88,18 +81,5 @@ class NewControllerTest extends WebTestCase
         $this->client->getCookieJar()->set($cookie);
     }
 
-    private function createFakeUser(string $fake){
-        $user = new User();
-        $user->setUsername($fake);
-        $user->setPassword($fake . 'password');
-        $user->setRoles(array('ROLE_USER'));
-        $this->getDoctrine->persist($user);
-        $this->getDoctrine->flush();
-    }
 
-    public function removeFakeUser(string $fake){
-        $toto = $this->getDoctrine->getRepository('App:User')->findOneByUsername($fake);
-        $this->getDoctrine->remove($toto);
-        $this->getDoctrine->flush();
-    }
 }

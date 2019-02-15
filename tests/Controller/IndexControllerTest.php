@@ -10,7 +10,7 @@ namespace App\Tests\Controller;
 
 use  \Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class IndexControllerTest extends WebTestCase
+class IndexControllerTest extends AbstractSetupClass
 {
 
     /** @test */

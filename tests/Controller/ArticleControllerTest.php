@@ -14,44 +14,50 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
-class ArticleControllerTest extends WebTestCase
+class ArticleControllerTest extends AbstractSetupClass
 {
-    private $client = null;
-    private $getDoctrine = null;
-    private static $idArticle = 1;
-    private static $username = 'test';
-    public function setUp()
-    {
-        $this->client = static::createClient();
-        $this->getDoctrine = $this->client->getContainer()->get('doctrine')->getManager();
-    }
 
     public function testGetArticleLogin()
     {
-        $this->logIn();
-        $crawler = $this->client->request('GET', '/article/' . self::$idArticle);
+        $this->createFakeUser('user001');
+        $this->createFakeArticle('user001', 'user001 first article');
+        $article = $this->getDoctrine->getRepository('App:Article')->findOneByTitre('user001 first article');
+
+
+        $this->logIn('user001');
+        $crawler = $this->client->request('GET', '/article/' . $article->getId());
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame('Article'.self::$idArticle.'ModifierSupprimer', preg_replace('/\s+/', '', ($crawler->filter('h2.my-4')->text())));
+        $this->assertSame('Article'.$article->getId().'ModifierSupprimer', preg_replace('/\s+/', '', ($crawler->filter('h2.my-4')->text())));
+
+        $this->removeFakeUser('user001');
+        $this->removeFakeArticle($article->getId());
     }
 
     public function testGetArticleLogout()
     {
-        $crawler = $this->client->request('GET', '/article/' . self::$idArticle);
+        $this->createFakeUser('user002');
+        $this->createFakeArticle('user001', 'user002 first article');
+        $article = $this->getDoctrine->getRepository('App:Article')->findOneByTitre('user002 first article');
+
+        $crawler = $this->client->request('GET', '/article/' . $article->getId());
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
-        $this->assertSame('Article ' . self::$idArticle, trim($crawler->filter('h2.my-4')->text()));
+        $this->assertSame('Article ' . $article->getId(), trim($crawler->filter('h2.my-4')->text()));
+
+        $this->removeFakeUser('user002');
+        $this->removeFakeArticle($article->getId());
+
     }
 
-    private function logIn()
+    private function logIn($username)
     {
         $session = $this->client->getContainer()->get('session');
 
         $firewallName = 'main';
         $firewallContext = 'main';
 
-        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername(self::$username);
-
+        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername($username);
 
         $token = new PostAuthenticationGuardToken($user, $firewallName, ['ROLE_USER']);
         $session->set('_security_'.$firewallContext, serialize($token));

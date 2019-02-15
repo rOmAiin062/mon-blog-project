@@ -31,3 +31,4 @@ security:
         - { path: ^/edit, roles: ROLE_USER }
         - { path: ^/delete, roles: ROLE_USER }
         - { path: ^/user, roles: ROLE_USER}
+        - { path: ^/changepasswd, roles: ROLE_USER}

@@ -14,34 +14,36 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Guard\Token\PostAuthenticationGuardToken;
 
-class EditControllerTest extends WebTestCase
+class EditControllerTest extends AbstractSetupClass
 {
-    private $client = null;
-    private $getDoctrine = null;
 
-    private static $idArticle = 1;
-    private static $username = 'test';
-
-    public function setUp()
-    {
-        $this->client = static::createClient();
-        $this->getDoctrine = $this->client->getContainer()->get('doctrine')->getManager();
-
-    }
 
     public function testGetEditLogIn()
     {
-        $this->logIn();
-        $crawler = $this->client->request('GET', '/edit/' . self::$idArticle);
+        $this->createFakeUser('user003');
+        $this->createFakeArticle('user003', 'user003 first article');
+        $article = $this->getDoctrine->getRepository('App:Article')->findOneByTitre('user003 first article');
+
+
+        $this->logIn('user003');
+        $crawler = $this->client->request('GET', '/edit/' . $article->getId());
 
         $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
         $this->assertSame('Modifierl\'article', preg_replace('/\s+/', '', ($crawler->filter('h2.my-4')->text())));
+
+        $this->removeFakeUser('user003');
+        $this->removeFakeArticle($article->getId());
     }
 
     public function testEditFormLogIn()
     {
-        $this->logIn();
-        $crawler = $this->client->request('GET', '/edit/' . self::$idArticle);
+        $this->createFakeUser('user004');
+        $this->createFakeArticle('user004', 'user004 first article');
+        $article = $this->getDoctrine->getRepository('App:Article')->findOneByTitre('user004 first article');
+
+
+        $this->logIn('user004');
+        $crawler = $this->client->request('GET', '/edit/' . $article->getId());
 
         $buttonCrawlerNode = $crawler->selectButton('new_article_form_enregistrer');
         $form = $buttonCrawlerNode->form([
@@ -55,29 +57,37 @@ class EditControllerTest extends WebTestCase
         $this->assertSame('TestEdit', preg_replace('/\s+/', '', ($crawler->filter('h3.card-title')->text())));
         $this->assertSame('ContenuTestEdit', preg_replace('/\s+/', '', ($crawler->filter('p.card-text')->text())));
 
-
+        $this->removeFakeUser('user004');
+        $this->removeFakeArticle($article->getId());
 
     }
 
 
     public function testGetEditLogout()
     {
-        $crawler = $this->client->request('GET', '/edit/' . self::$idArticle);
+        $this->createFakeUser('user005');
+        $this->createFakeArticle('user005', 'user005 first article');
+        $article = $this->getDoctrine->getRepository('App:Article')->findOneByTitre('user005 first article');
+
+        $crawler = $this->client->request('GET', '/edit/' . $article->getId());
 
         $this->assertSame(302, $this->client->getResponse()->getStatusCode());
         $crawler = $this->client->followRedirect();
         $this->assertSame('Formulaire d\'authentification', trim($crawler->filter('h2.my-4')->text()));
 
+
+        $this->removeFakeUser('user005');
+        $this->removeFakeArticle($article->getId());
     }
 
-    private function logIn()
+    private function logIn($username)
     {
         $session = $this->client->getContainer()->get('session');
 
         $firewallName = 'main';
         $firewallContext = 'main';
 
-        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername(self::$username);
+        $user = $this->getDoctrine->getRepository('App:User')->findOneByUsername($username);
 
 
         $token = new PostAuthenticationGuardToken($user, $firewallName, ['ROLE_USER']);
