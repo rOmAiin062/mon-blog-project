@@ -41,32 +41,32 @@ class DeleteControllerTest extends WebTestCase
 
     public function testDeleteWithAuthenticatedUser()
     {
-        $this->createFakeUser('fakeAuteur');
-        $this->logIn('fakeAuteur');
+        $this->createFakeUser('toto');
+        $this->logIn('toto');
 
-        $this->createFakeArticle('fakeAuteur');
-        $article = $this->getDoctrine->getRepository('App:Article')->findOneByTitre('fakeTitre');
+        $this->createFakeArticle('toto', 'testDeleteWithAuthenticatedUser');
+        $article = $this->getDoctrine->getRepository('App:Article')->findOneByTitre('testDeleteWithAuthenticatedUser');
         $crawler = $this->client->request('DELETE', '/delete/'.$article->getId());
 
         $this->assertSame(Response::HTTP_NO_CONTENT, $this->client->getResponse()->getStatusCode());
-        $this->assertNull($this->getDoctrine->getRepository('App:Article')->findOneByTitre('fakeTitre'));
-        $this->removeFakeUser('fakeAuteur');
+        $this->assertNull($this->getDoctrine->getRepository('App:Article')->findOneByTitre(['titre' => 'testDeleteWithAuthenticatedUser']));
+        $this->removeFakeUser('toto');
     }
 
     public function testDeleteWithNotAllowedUser()
     {
-        $this->createFakeUser('fakeAuteur');
-        $this->createFakeUser('fakeAuteur2');
-        $this->logIn('fakeAuteur');
+        $this->createFakeUser('john');
+        $this->createFakeUser('doe');
+        $this->logIn('john');
 
-        $this->createFakeArticle('fakeAuteur');
-        $this->createFakeArticle('fakeAuteur2');
-        $article = $this->getDoctrine->getRepository('App:Article')->findOneByAuteur('fakeAuteur2');
+        $this->createFakeArticle('john', 'testDeleteWithNotAllowedUser');
+        $this->createFakeArticle('doe', 'DoeArticletestDeleteWithNotAllowedUser');
+        $article = $this->getDoctrine->getRepository('App:Article')->findOneByTitre('DoeArticletestDeleteWithNotAllowedUser');
         $crawler = $this->client->request('DELETE', '/delete/'.$article->getId());
 
         $this->assertSame(Response::HTTP_FORBIDDEN, $this->client->getResponse()->getStatusCode());
-        $this->removeFakeUser('fakeAuteur');
-        $this->removeFakeUser('fakeAuteur2');
+        $this->removeFakeUser('john');
+        $this->removeFakeUser('doe');
 
     }
 
@@ -87,9 +87,9 @@ class DeleteControllerTest extends WebTestCase
         $this->client->getCookieJar()->set($cookie);
     }
 
-    private function createFakeArticle(string $fakeAuteur){
+    private function createFakeArticle(string $fakeAuteur, string $fakeTitre){
         $article = new Article();
-        $article->setTitre('fakeTitre');
+        $article->setTitre($fakeTitre);
         $article->setContenu('fakeContenu');
         $article->setDate(new DateTime('2019-01-01'));
         $article->setAuteur($fakeAuteur);
