@@ -22,13 +22,13 @@
         <ul class="navbar-nav">
             {% if app.user != null %}
                 <li class="nav-item my-2 my-lg-0">
-                    <p class="text-light">
+                    <a class="text-light" href="/user">
                         {{ app.user.username }}
                         <i class="far fa-user"></i>
-                    </p>
+                    </a>
                 </li>
                 <li class="nav-item my-2 my-lg-0">
-                    <a href="/logout">Déconnexion  <i class="fas fa-sign-out-alt"></i></a>
+                    <a href="/logout">Deconnexion<i class="fas fa-sign-out-alt"></i></a>
                 </li>
             {% else %}
                 <a class="nav-link my-2 my-lg-0" href="/login">Se connecter</a>

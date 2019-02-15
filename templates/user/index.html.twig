@@ -3,45 +3,27 @@
 {% extends 'base.html.twig' %}
 
 {% block container %}
-    <div class="row">
-        <div class="col-lg-3 col-sm-6">
-
-            <div class="card hovercard">
-                <div class="cardheader">
-
-                </div>
-                <div class="avatar">
-                    <img alt="" src="http://lorempixel.com/100/100/people/9/">
-                </div>
-                <div class="info">
-                    <div class="title">
-                        {% if user %}
-                            <a target="_blank" href="https://scripteden.com/">{{ user.username }}</a>
-                        {% else %}
-                            <a target="_blank" href="https://scripteden.com/">---</a>
-                        {% endif %}
+        <div class="col-md-8">
+            <div class="">
+                <center style="padding: 2%">
+                    <img alt="profile picture" src="{{ asset('images/profile_icon.png') }}"
+                         width="150" height="150" style="border-radius: 50%; background-color: whitesmoke">
+                    <h2 style="margin-top: 1%">{{ user.username }}</h2>
+                    {% if user.bio is not empty  %}
+                        <p style="font-size: larger">&#8220; {{ user.bio }} &#8221;</p>
+                    {% endif %}
+                    <div class="col-xs-12 col-sm-4 emphasis">
+                        <h2><strong> {{ nb_article }} </strong></h2>
+                        <p><small>Articles</small></p>
+                        <a class="btn btn-info btn-block" href="/articles/{{ user.username }}"><span class="fa fa-newspaper"></span> Voir </a>
                     </div>
-                    <div class="desc">Passionate designer</div>
-                </div>
-                <div class="bottom">
-                    <a class="btn btn-primary btn-twitter btn-sm" href="https://twitter.com/webmaniac">
-                        <i class="fa fa-twitter"></i>
-                    </a>
-                    <a class="btn btn-danger btn-sm" rel="publisher"
-                       href="https://plus.google.com/+ahmshahnuralam">
-                        <i class="fa fa-google-plus"></i>
-                    </a>
-                    <a class="btn btn-primary btn-sm" rel="publisher"
-                       href="https://plus.google.com/shahnuralam">
-                        <i class="fa fa-facebook"></i>
-                    </a>
-                    <a class="btn btn-warning btn-sm" rel="publisher" href="https://plus.google.com/shahnuralam">
-                        <i class="fa fa-behance"></i>
-                    </a>
-                </div>
+                </center>
             </div>
-
+            <div class="modal-body">
+                <ul>
+                    <li><a href="#">Changer mot de passe</a></li>
+                    <li><a href="#">Changer description</a></li>
+                </ul>
+            </div>
         </div>
-
-    </div>
 {% endblock %}

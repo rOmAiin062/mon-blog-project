@@ -26,4 +26,15 @@ class ArticleController extends AbstractController
 
         return $this->render('article.html.twig', ['article' => $article]);
     }
+
+    /**
+     * @Route("articles/{name}", name="personal_articles")
+     */
+    public function showArticles($name) : Response
+    {
+        $articleRepository = $this->getDoctrine()->getRepository(Article::class);
+        $articles = $articleRepository->findBy(['auteur' => $name]);
+
+        return $this->render('index.html.twig', ['articles' => $articles, 'personal' => true]);
+    }
 }

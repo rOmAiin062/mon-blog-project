@@ -8,6 +8,7 @@
         "ext-mcrypt": "*",
         "ambta/doctrine-encrypt-bundle": "^2.5",
         "sensio/framework-extra-bundle": "^5.2",
+        "symfony/asset": "4.2.*",
         "symfony/console": "4.2.*",
         "symfony/debug-bundle": "4.2.*",
         "symfony/dotenv": "4.2.*",

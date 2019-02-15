@@ -48,7 +48,7 @@ class NewController extends AbstractController
 
             $entityManager->flush();
 
-            return $this->render('creer.html.twig', ['isValidate' => 'true', 'id' => $article->getId()]);
+            return $this->render('creer.html.twig', ['isValidate' => 'true', 'id' => $article->getId(), 'createNew' => 'false']);
 
         }
 

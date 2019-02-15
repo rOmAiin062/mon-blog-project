@@ -4,9 +4,15 @@
 
 {% block container %}
     <div class="col-md-8">
+        {% if personal %}
+        <h2 class="my-4">Mes derniers articles
+            <small></small>
+        </h2>
+        {% else %}
         <h2 class="my-4">Les derniers articles
             <small></small>
         </h2>
+        {% endif %}
 
         {% for article in articles %}
         <div class="card mb-4">

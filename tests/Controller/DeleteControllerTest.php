@@ -49,6 +49,7 @@ class DeleteControllerTest extends WebTestCase
         $crawler = $this->client->request('DELETE', '/delete/'.$article->getId());
 
         $this->assertSame(Response::HTTP_NO_CONTENT, $this->client->getResponse()->getStatusCode());
+        $this->assertNull($this->getDoctrine->getRepository('App:Article')->findOneByTitre('fakeTitre'));
         $this->removeFakeUser('fakeAuteur');
     }
 
